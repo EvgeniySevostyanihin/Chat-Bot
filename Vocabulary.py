@@ -2,12 +2,8 @@ import json
 
 
 # извлечение данных
-def extract_data():
-    data = open('data/complete')
-    data = data.read()
-    return [x.split('\t||\t') for x in data.split('\n\n')][:-1]
-
-data = extract_data()
+with open('data/complete', 'r', encoding='utf-8') as data:
+    data = json.load(data)
 
 PAD_token = 0
 SOS_token = 1

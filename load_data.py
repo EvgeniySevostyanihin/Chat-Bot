@@ -1,11 +1,13 @@
 import string
+import json
+
 
 # Ниже код находит диалог, тоесть последовательность строк начинающихся с "-". При чём даже если между ними 2 абзаца,
 # без диалога, возможно это работает некорректно и добавляет ненужные фразы (на данном этапе мне по барабану).
 #
 # к коду ниже лучше вообще не пркасаться, слишком долго втыкать во все ошибки.
 
-def find_dialog(text, start_dialog:str):
+def find_dialog(text, start_dialog: str):
     convert = [[]]
     i = 0
 
@@ -23,9 +25,9 @@ def find_dialog(text, start_dialog:str):
                     i = 0
                 else:
                     try:
-                        if (text[j+1][:len(start_dialog)] == start_dialog)\
-                                or (text[j+2][:len(start_dialog)] == start_dialog) \
-                                or (text[j+3][:len(start_dialog)] == start_dialog):
+                        if (text[j + 1][:len(start_dialog)] == start_dialog) \
+                                or (text[j + 2][:len(start_dialog)] == start_dialog) \
+                                or (text[j + 3][:len(start_dialog)] == start_dialog):
                             continue
                         break
                     except:
@@ -41,7 +43,6 @@ for i in range(1, 29):
     text = text.split('\n')
     text = find_dialog(text, '— ')
     complete += text
-
 
 i = 0
 for n in complete:
@@ -73,9 +74,7 @@ pairs = []
 for dialog in complete:
     for n in range(len(dialog)):
         try:
-            pair = []
-            pair.append(dialog[n])
-            pair.append(dialog[n+1])
+            pair = [dialog[n], dialog[n + 1]]
             pairs.append(pair)
         except Exception:
             pass
@@ -86,17 +85,16 @@ pairs = []
 modification = lambda x: x if x not in string.punctuation + ' — «»' else ' '
 
 for pair in old_pairs:
-    input, output = pair
-    input = input[2:].lower()
-    output = output[2:].lower()
-    input = ''.join(modification(x) for x in input)
-    output = ''.join(modification(x) for x in output)
-    pair = [input, output]
+    inp, out = pair
+    inp = inp[2:].lower()
+    out = out[2:].lower()
+    inp = ''.join(modification(x) for x in inp)
+    out = ''.join(modification(x) for x in out)
+    pair = [inp, out]
     pairs.append(pair)
 
 # убрал все ненужные знаки припенания и перевёл в нижний регистр
 
-file = open('data/complete', 'w')
+with open("data/complete", "w", encoding="utf-8") as file:
+    json.dump(pairs, file)
 
-for pair in pairs:
-    file.write(pair[0] + '\t||\t' + pair[1] + '\n\n')

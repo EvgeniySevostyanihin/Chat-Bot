@@ -3,6 +3,22 @@ import torch
 from itertools import zip_longest
 
 
+def load_voc(path="data/trimmed_data"):
+
+    import json
+
+    with open(path, 'r', encoding='utf-8') as data:
+        data = json.load(data)
+
+    Vocabulary = Voc()
+
+    for pair in data:
+        for sentence in pair:
+            Vocabulary.add_sentence(sentence)
+
+    return data, Vocabulary
+
+
 indexesFromSentence = lambda sentence: [Vocabulary.word2index[word] \
                                         for word in sentence.split(' ')] + [EOS_token]
 
@@ -21,7 +37,7 @@ def binary_matrix(indexes):
 
 
 # принимает батч из data и переводит в индексы словаря, при этом допольняет нулями,
-# также возвращает список длин всех предложений из батча, это будет нужно позже
+# также возвращает список длин всех предложений из батча, это нужно для pack_padded_sequence
 
 def input_var(batch):
     indexes_batch = [indexesFromSentence(sentence) for sentence in batch]

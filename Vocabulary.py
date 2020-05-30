@@ -96,19 +96,3 @@ data = trim_rare_words(Vocabulary, data)
 
 with open("data/trimmed_data", "w", encoding="utf-8") as file:
     json.dump(data, file)
-
-
-def load_voc(path="data/trimmed_data"):
-
-    import json
-
-    with open(path, 'r', encoding='utf-8') as data:
-        data = json.load(data)
-
-    Vocabulary = Voc()
-
-    for pair in data:
-        for sentence in pair:
-            Vocabulary.add_sentence(sentence)
-
-    return data, Vocabulary

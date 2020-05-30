@@ -97,4 +97,3 @@ for pair in old_pairs:
 
 with open("data/complete", "w", encoding="utf-8") as file:
     json.dump(pairs, file)
-

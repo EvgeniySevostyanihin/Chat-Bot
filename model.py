@@ -110,7 +110,7 @@ class AttentionDecoder(nn.Module):
 
         self.attention = Attention()
 
-        # из контакста + выхода с енкодера, получаю вектор размера EMBEDDING_SIZE
+        # из контекста + выхода с енкодера, получаю вектор размера EMBEDDING_SIZE
         self.concat = nn.Linear(EMBEDDING_SIZE * 2, EMBEDDING_SIZE)
         # из получившегося веткора получаю вектор весов для всех слов,
         # что само по себе предсказание следующего слова

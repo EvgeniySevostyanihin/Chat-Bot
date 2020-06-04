@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+import os
 
 
 PAD_token = 0
@@ -70,6 +71,8 @@ class Encoder(nn.Module):
         # будет двухнаправленный, тоесть складывает матрицы
         # с конца и с начала, так больше профита даётся
 
+        self.epochs = 0
+
     def forward(self, input_seq, length, hidden=None):
         embed = self.embedding(input_seq)
 
@@ -85,18 +88,6 @@ class Encoder(nn.Module):
         return output, hidden
 
 
-class Attention(nn.Module):
-    def __init__(self):
-        super(Attention, self).__init__()
-
-        self.dot_score = lambda hidden, encod: torch.sum(hidden * encod, dim=2)
-
-    def forward(self, hidden, encod):
-        result = self.dot_score(hidden, encod)
-
-        return nn.functional.softmax(result.t(), dim=1).unsqueeze(1)
-
-
 class AttentionDecoder(nn.Module):
     def __init__(self, embedding):
         super(AttentionDecoder, self).__init__()
@@ -108,13 +99,16 @@ class AttentionDecoder(nn.Module):
         self.gru = nn.GRU(EMBEDDING_SIZE, EMBEDDING_SIZE,
                           num_layers=2, dropout=0.4)
 
-        self.attention = Attention()
-
         # из контекста + выхода с енкодера, получаю вектор размера EMBEDDING_SIZE
         self.concat = nn.Linear(EMBEDDING_SIZE * 2, EMBEDDING_SIZE)
         # из получившегося веткора получаю вектор весов для всех слов,
         # что само по себе предсказание следующего слова
         self.predict = nn.Linear(EMBEDDING_SIZE, embedding.num_embeddings)
+
+    def attention(self, hidden, encod):
+
+        result = torch.sum(hidden * encod, dim=2)
+        return nn.functional.softmax(result.t(), dim=1).unsqueeze(1)
 
     def forward(self, word, hidden, encoder_outputs):
         embed = self.embedding(word)
@@ -141,3 +135,13 @@ class AttentionDecoder(nn.Module):
         out = nn.functional.softmax(out, dim=1)
 
         return out, hidden
+
+
+def load_models():
+    name = ((len(os.listdir('models')) // 3) - 1) * 1000
+
+    encoder = torch.load(f'models/encoder{name}')
+    decoder = torch.load(f'models/decoder{name}')
+    embedding = torch.load(f'models/embedding{name}')
+
+    return encoder, decoder, embedding

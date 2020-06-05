@@ -137,7 +137,9 @@ class AttentionDecoder(nn.Module):
         return out, hidden
 
 
+# Загрузка модели, после сохраниния в функции train
 def load_models():
+    # тк каждые 1000 итираций сохраняются по 3 файла
     name = ((len(os.listdir('models')) // 3) - 1) * 1000
 
     encoder = torch.load(f'models/encoder{name}')

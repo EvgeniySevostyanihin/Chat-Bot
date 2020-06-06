@@ -147,3 +147,4 @@ def load_models():
     embedding = torch.load(f'models/embedding{name}')
 
     return encoder, decoder, embedding
+

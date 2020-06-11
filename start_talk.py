@@ -10,7 +10,7 @@ encoder, decoder, embedding = load_models()
 device = "cuda:0"
 
 
-def greedy_search(sequence, length, maximum=30):
+def greedy_search(sequence, length, maximum=40):
     # всё также как на тренировке
     encoder_out, encoder_hidden = encoder(sequence, length)
 
@@ -48,7 +48,5 @@ while "Матеша идёт":
     text = greedy_search(text, length)
 
     text = [Vocabulary.index2word[token.item()] for token in text]
-
-    text[:] = [x for x in text if not (x == 'EOS' or x == "PAD")]
 
     print(f'Машина > {" ".join(text)}')

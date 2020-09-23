@@ -1,3 +1,8 @@
 # Russian Chat-Bot
 
-It's Simple myself chat-bot for fun
+This chatbot based on NN models, he generate responses based on collections dialog in Peleven's book.  
+Dont worked
+
+## ToDo
+* using gpt
+* add in telegram
